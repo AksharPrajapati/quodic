@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const useFetchStarwarsData = (searchTerm: string) => {
+const useFetchStarwarsData = (searchTerm: string, page: number) => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
@@ -11,15 +11,15 @@ const useFetchStarwarsData = (searchTerm: string) => {
     }, 500);
 
     return () => clearTimeout(handler);
-  }, [searchTerm]);
+  }, [searchTerm, page]);
 
   useEffect(() => {
     const fetchStarwarsData = async () => {
       setLoading(true);
       try {
         const url = debouncedSearchTerm
-          ? `https://swapi.dev/api/people/?search=${debouncedSearchTerm}`
-          : "https://swapi.dev/api/people/";
+          ? `https://swapi.dev/api/people/?search=${debouncedSearchTerm}&page=${page}`
+          : `https://swapi.dev/api/people/?page=${page}`;
 
         const response = await fetch(url);
         if (!response.ok) {
@@ -36,7 +36,7 @@ const useFetchStarwarsData = (searchTerm: string) => {
     };
 
     fetchStarwarsData(); // Always fetch data on change
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, page]);
 
   return { data, loading };
 };
