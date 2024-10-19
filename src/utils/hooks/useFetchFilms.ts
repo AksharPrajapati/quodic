@@ -1,27 +1,25 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 const useFetchFilmsData = () => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    fetchFilmsData();
-  }, []);
-
   const fetchFilmsData = async () => {
     try {
-      setLoading(true);
       const response = await fetch("https://swapi.dev/api/films");
       const data = await response.json();
-      setData(data?.results || []);
-      setLoading(false);
+
+      return data?.results;
     } catch (error) {
       console.error(error);
-      setLoading(false);
     }
   };
 
-  return { data, loading };
+  return useQuery({
+    queryKey: ["fetchFilmsData"],
+    queryFn: fetchFilmsData,
+    retry: 3,
+    retryDelay: 1 * 60 * 1000,
+    refetchInterval: 3 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
+  });
 };
 
 export default useFetchFilmsData;

@@ -8,7 +8,7 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ character, closeModal }) => {
-  const [data, loading]: any = useFetchHomeWorldData(character?.homeworld);
+  const { data, isLoading }: any = useFetchHomeWorldData(character?.homeworld);
 
   const formattedDate = new Date(character.created).toLocaleDateString("en-GB");
 
@@ -48,7 +48,7 @@ const Modal: React.FC<ModalProps> = ({ character, closeModal }) => {
 
         <h2 className="text-2xl font-bold mb-4">{character.name}</h2>
 
-        {loading ? (
+        {isLoading ? (
           <div className="flex items-center justify-center h-8">
             <Spinner />
           </div>

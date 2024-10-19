@@ -18,7 +18,10 @@ function Dashboard() {
   const [data, setData] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
 
-  const { data: fetchedData, loading } = useFetchStarwarsData(searchTerm, page);
+  const { data: fetchedData, isLoading } = useFetchStarwarsData(
+    searchTerm,
+    page
+  );
   const { data: filmsData } = useFetchFilms();
   const { data: planetsData } = useFetchPlanets();
   const { data: speciesData } = useFetchSpecies();
@@ -54,7 +57,7 @@ function Dashboard() {
 
   const lastElementRef = useCallback(
     (node: HTMLElement | null) => {
-      if (loading || !hasMore) return;
+      if (isLoading || !hasMore) return;
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
@@ -63,7 +66,7 @@ function Dashboard() {
       });
       if (node) observer.current.observe(node);
     },
-    [loading, hasMore]
+    [isLoading, hasMore]
   );
 
   const openModal = (character: any) => {
@@ -141,7 +144,7 @@ function Dashboard() {
         </select>
       </div>
 
-      {filteredData.length === 0 && !loading && (
+      {filteredData.length === 0 && !isLoading && (
         <div className="w-full text-center text-gray-600 mt-10">
           No results found
         </div>
@@ -168,7 +171,7 @@ function Dashboard() {
         ))}
       </div>
 
-      {loading && (
+      {isLoading && (
         <div className="w-full h-20 flex items-center justify-center">
           <Spinner />
         </div>

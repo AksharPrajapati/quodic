@@ -1,27 +1,24 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 const useFetchHomeWorldData = (url: string) => {
-  const [data, setData] = useState({});
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    fetchHomeWorldData();
-  }, [url]);
-
   const fetchHomeWorldData = async () => {
     try {
-      setLoading(true);
       const response = await fetch(url);
       const data = await response.json();
-      setData(data);
-      setLoading(false);
+      return data;
     } catch (error) {
       console.error(error);
-      setLoading(false);
     }
   };
 
-  return [data, loading];
+  return useQuery({
+    queryKey: ["fetchHomeWorldData", url],
+    queryFn: fetchHomeWorldData,
+    retry: 3,
+    retryDelay: 1 * 60 * 1000,
+    refetchInterval: 3 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
+  });
 };
 
 export default useFetchHomeWorldData;
