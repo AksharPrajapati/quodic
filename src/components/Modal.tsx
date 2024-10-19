@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import useFetchHomeWorldData from "../utils/hooks/useFetchHomeWorldData";
 import Spinner from "./Spinner";
+import { useTheme } from "../utils/context/ThemeContext";
 
 interface ModalProps {
   character: any;
@@ -9,6 +10,7 @@ interface ModalProps {
 
 const Modal: React.FC<ModalProps> = ({ character, closeModal }) => {
   const { data, isLoading }: any = useFetchHomeWorldData(character?.homeworld);
+  const { isDarkMode } = useTheme();
 
   const formattedDate = new Date(character.created).toLocaleDateString("en-GB");
 
@@ -26,22 +28,30 @@ const Modal: React.FC<ModalProps> = ({ character, closeModal }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal-overlay">
-      <div className="bg-white w-11/12 md:w-2/3 lg:w-1/2 p-6 rounded-lg shadow-lg relative">
+      <div
+        className={`w-11/12 md:w-2/3 lg:w-1/2 p-6 rounded-lg shadow-lg relative ${
+          isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"
+        }`}
+      >
         <button
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+          className={`absolute top-2 right-2 ${
+            isDarkMode
+              ? "text-gray-400 hover:text-gray-300"
+              : "text-gray-500 hover:text-gray-800"
+          }`}
           onClick={closeModal}
         >
           <svg
-            className="h-8 w-8 text-gray-500"
+            className="h-8 w-8"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />{" "}
-            <line x1="9" y1="9" x2="15" y2="15" />{" "}
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <line x1="9" y1="9" x2="15" y2="15" />
             <line x1="15" y1="9" x2="9" y2="15" />
           </svg>
         </button>

@@ -6,6 +6,7 @@ import Spinner from "../components/Spinner";
 import useFetchFilms from "../utils/hooks/useFetchFilms";
 import useFetchPlanets from "../utils/hooks/useFetchPlanets";
 import useFetchSpecies from "../utils/hooks/useFetchSpecies";
+import { useTheme } from "../utils/context/ThemeContext";
 
 function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,6 +18,8 @@ function Dashboard() {
   const [page, setPage] = useState(1);
   const [data, setData] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
+
+  const { isDarkMode } = useTheme();
 
   const { data: fetchedData, isLoading } = useFetchStarwarsData(
     searchTerm,
@@ -93,7 +96,11 @@ function Dashboard() {
   });
 
   return (
-    <div className="min-h-screen p-6 bg-gray-100">
+    <div
+      className={`min-h-screen p-6 ${
+        isDarkMode ? "bg-gray-800 text-white" : "bg-gray-100 text-black"
+      }`}
+    >
       <Header />
 
       <div className="mb-6 flex flex-col sm:flex-row items-center">
@@ -102,12 +109,20 @@ function Dashboard() {
           placeholder="Search..."
           value={searchTerm}
           onChange={handleSearchChange}
-          className="border border-gray-300 rounded-md p-2 mr-2 w-full sm:w-1/3"
+          className={`border rounded-md p-2 mr-2 w-full sm:w-1/3 ${
+            isDarkMode
+              ? "border-gray-600 bg-gray-700 text-white"
+              : "border-gray-300 bg-white text-black"
+          }`}
         />
         <select
           value={filmFilter}
           onChange={(e) => handleFilterChange("film", e.target.value)}
-          className="border border-gray-300 min-w-48 rounded-md p-2 mr-2 mb-4 sm:mb-0"
+          className={`border rounded-md p-2 mr-2 mb-4 sm:mb-0 min-w-48 ${
+            isDarkMode
+              ? "border-gray-600 bg-gray-700 text-white"
+              : "border-gray-300 bg-white text-black"
+          }`}
         >
           <option value="">All Films</option>
           {filmsData?.map((film: any) => (
@@ -120,7 +135,11 @@ function Dashboard() {
         <select
           value={speciesFilter}
           onChange={(e) => handleFilterChange("species", e.target.value)}
-          className="border border-gray-300 min-w-48 rounded-md p-2 mr-2 mb-4 sm:mb-0"
+          className={`border rounded-md p-2 mr-2 mb-4 sm:mb-0 min-w-48 ${
+            isDarkMode
+              ? "border-gray-600 bg-gray-700 text-white"
+              : "border-gray-300 bg-white text-black"
+          }`}
         >
           <option value="">All Species</option>
           {speciesData?.map((species: any) => (
@@ -133,7 +152,11 @@ function Dashboard() {
         <select
           value={planetFilter}
           onChange={(e) => handleFilterChange("planet", e.target.value)}
-          className="border border-gray-300 min-w-48 rounded-md p-2 mr-2 mb-4 sm:mb-0"
+          className={`border rounded-md p-2 mr-2 mb-4 sm:mb-0 min-w-48 ${
+            isDarkMode
+              ? "border-gray-600 bg-gray-700 text-white"
+              : "border-gray-300 bg-white text-black"
+          }`}
         >
           <option value="">All Planets</option>
           {planetsData?.map((planet: any) => (
@@ -155,7 +178,9 @@ function Dashboard() {
           <div
             key={character.url}
             onClick={() => openModal(character)}
-            className="p-4 rounded-lg shadow-md transform transition-transform duration-300 hover:scale-105 hover:shadow-lg"
+            className={`p-4 rounded-lg shadow-md transform transition-transform duration-300 hover:scale-105 hover:shadow-lg ${
+              isDarkMode ? "bg-gray-700" : "bg-white"
+            }`}
             ref={index === filteredData.length - 1 ? lastElementRef : null}
           >
             <img
@@ -165,7 +190,13 @@ function Dashboard() {
             />
             <div className="mt-4">
               <h2 className="text-xl font-semibold">{character.name}</h2>
-              <p className="text-gray-700 mt-2">{character.description}</p>
+              <p
+                className={`mt-2 ${
+                  isDarkMode ? "text-gray-300" : "text-gray-700"
+                }`}
+              >
+                {character.description}
+              </p>
             </div>
           </div>
         ))}
