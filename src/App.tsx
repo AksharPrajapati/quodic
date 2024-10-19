@@ -10,8 +10,6 @@ function App() {
     ? true
     : false;
 
-  console.log(isAuthenticated);
-
   return (
     <Router>
       <Routes>
