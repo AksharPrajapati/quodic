@@ -24,8 +24,16 @@ function Login() {
 
   const handleSubmit = async (values: typeof initialValues) => {
     // const token: string = await generateJWTToken(values.email);
-    localStorage.setItem("isAuthenticated", "true");
-    navigate("/");
+    const envUsername = process.env.REACT_APP_USERNAME;
+    const envPassword = process.env.REACT_APP_PASSWORD;
+
+    if (values.email === envUsername && values.password === envPassword) {
+      alert("Login successful!");
+      localStorage.setItem("isAuthenticated", "true");
+      navigate("/");
+    } else {
+      alert("Invalid email or password");
+    }
   };
 
   return (
