@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import Header from "../components/Header";
 import useFetchStarwarsData from "../utils/hooks/useFetchStarwarsData";
 import Modal from "../components/Modal";
@@ -31,11 +37,15 @@ function Dashboard() {
 
   const observer = useRef<IntersectionObserver | null>(null);
 
+  // Reset data when search term or filters change
   useEffect(() => {
-    if (page === 1) {
-      setData([]);
-    }
+    setData([]);
+    setPage(1);
+    setHasMore(true);
+  }, [searchTerm, filmFilter, speciesFilter, planetFilter]);
 
+  // Fetch data effect
+  useEffect(() => {
     if (fetchedData && fetchedData.length > 0) {
       setData((prevData) => [...prevData, ...fetchedData]);
       setHasMore(fetchedData.length > 0);
@@ -44,20 +54,34 @@ function Dashboard() {
     }
   }, [fetchedData]);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-    setPage(1);
-    setHasMore(true);
+  // Debounce function to avoid multiple state updates for search input
+  const debounce = (func: Function, delay: number) => {
+    let timeoutId: NodeJS.Timeout;
+    return (...args: any[]) => {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func(...args), delay);
+    };
   };
 
-  const handleFilterChange = (filterType: string, value: string) => {
-    if (filterType === "film") setFilmFilter(value);
-    if (filterType === "species") setSpeciesFilter(value);
-    if (filterType === "planet") setPlanetFilter(value);
-    setPage(1);
-    setHasMore(true);
-  };
+  const handleSearchChange = debounce(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchTerm(e.target.value);
+    },
+    500
+  );
 
+  const handleFilterChange = useCallback(
+    (filterType: string, value: string) => {
+      if (filterType === "film") setFilmFilter(value);
+      if (filterType === "species") setSpeciesFilter(value);
+      if (filterType === "planet") setPlanetFilter(value);
+      setPage(1);
+      setHasMore(true);
+    },
+    []
+  );
+
+  // Infinite scrolling logic
   const lastElementRef = useCallback(
     (node: HTMLElement | null) => {
       if (isLoading || !hasMore) return;
@@ -72,28 +96,31 @@ function Dashboard() {
     [isLoading, hasMore]
   );
 
-  const openModal = (character: any) => {
+  const openModal = useCallback((character: any) => {
     setSelectedCharacter(character);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setIsModalOpen(false);
     setSelectedCharacter(null);
-  };
+  }, []);
 
-  const filteredData = data.filter((character: any) => {
-    const matchesFilm = filmFilter
-      ? character.films.includes(filmFilter)
-      : true;
-    const matchesSpecies = speciesFilter
-      ? character.species.includes(speciesFilter)
-      : true;
-    const matchesPlanet = planetFilter
-      ? character.planets === planetFilter
-      : true;
-    return matchesFilm && matchesSpecies && matchesPlanet;
-  });
+  // Memoized filtered data for performance optimization
+  const filteredData = useMemo(() => {
+    return data.filter((character: any) => {
+      const matchesFilm = filmFilter
+        ? character.films.includes(filmFilter)
+        : true;
+      const matchesSpecies = speciesFilter
+        ? character.species.includes(speciesFilter)
+        : true;
+      const matchesPlanet = planetFilter
+        ? character.planets === planetFilter
+        : true;
+      return matchesFilm && matchesSpecies && matchesPlanet;
+    });
+  }, [data, filmFilter, speciesFilter, planetFilter]);
 
   return (
     <div
@@ -107,7 +134,6 @@ function Dashboard() {
         <input
           type="text"
           placeholder="Search..."
-          value={searchTerm}
           onChange={handleSearchChange}
           className={`border rounded-md p-2 mr-2 w-full sm:w-1/3 ${
             isDarkMode
@@ -131,7 +157,6 @@ function Dashboard() {
             </option>
           ))}
         </select>
-
         <select
           value={speciesFilter}
           onChange={(e) => handleFilterChange("species", e.target.value)}
@@ -148,7 +173,6 @@ function Dashboard() {
             </option>
           ))}
         </select>
-
         <select
           value={planetFilter}
           onChange={(e) => handleFilterChange("planet", e.target.value)}
