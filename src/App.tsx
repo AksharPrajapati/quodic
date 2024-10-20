@@ -6,10 +6,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Cookies from "js-cookie";
 
 function App() {
-  const isAuthenticated = localStorage.getItem("isAuthenticated")
-    ? true
-    : false;
-
   return (
     <Router>
       <Routes>
@@ -17,7 +13,7 @@ function App() {
         <Route
           path="/"
           element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <ProtectedRoute>
               <Dashboard />
             </ProtectedRoute>
           }
