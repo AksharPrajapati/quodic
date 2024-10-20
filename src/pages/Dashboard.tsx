@@ -187,6 +187,7 @@ function Dashboard() {
               src={`https://picsum.photos/300/200?random=${index}`}
               alt={character.name}
               className="w-full h-40 object-cover rounded-t-lg"
+              loading="lazy"
             />
             <div className="mt-4">
               <h2 className="text-xl font-semibold">{character.name}</h2>
