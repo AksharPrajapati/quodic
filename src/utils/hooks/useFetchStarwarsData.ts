@@ -31,7 +31,10 @@ const useFetchStarwarsData = (searchTerm: string, page: number) => {
   };
 
   return useQuery({
-    queryKey: ["fetchStarwarsData", `${debouncedSearchTerm}-${page}`],
+    queryKey: [
+      "fetchStarwarsData",
+      `${searchTerm}-${debouncedSearchTerm}-${page}`,
+    ],
     queryFn: fetchStarwarsData,
     retry: 3,
     retryDelay: 1000,

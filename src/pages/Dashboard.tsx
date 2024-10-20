@@ -37,12 +37,12 @@ function Dashboard() {
 
   const observer = useRef<IntersectionObserver | null>(null);
 
-  // Reset data when search term or filters change
-  useEffect(() => {
-    setData([]);
-    setPage(1);
-    setHasMore(true);
-  }, [searchTerm, filmFilter, speciesFilter, planetFilter]);
+  //   // Reset data when search term or filters change
+  //   useEffect(() => {
+  //     // setData([]);
+  //     setPage(1);
+  //     setHasMore(true);
+  //   }, [searchTerm, filmFilter, speciesFilter, planetFilter]);
 
   // Fetch data effect
   useEffect(() => {
@@ -198,33 +198,35 @@ function Dashboard() {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {filteredData.map((character: any, index: number) => (
-          <div
-            key={character.url}
-            onClick={() => openModal(character)}
-            className={`p-4 rounded-lg shadow-md transform transition-transform duration-300 hover:scale-105 hover:shadow-lg ${
-              isDarkMode ? "bg-gray-700" : "bg-white"
-            }`}
-            ref={index === filteredData.length - 1 ? lastElementRef : null}
-          >
-            <img
-              src={`https://picsum.photos/300/200?random=${index}`}
-              alt={character.name}
-              className="w-full h-40 object-cover rounded-t-lg"
-              loading="lazy"
-            />
-            <div className="mt-4">
-              <h2 className="text-xl font-semibold">{character.name}</h2>
-              <p
-                className={`mt-2 ${
-                  isDarkMode ? "text-gray-300" : "text-gray-700"
-                }`}
-              >
-                {character.description}
-              </p>
+        {filteredData.length > 0 &&
+          !isLoading &&
+          filteredData.map((character: any, index: number) => (
+            <div
+              key={character.url}
+              onClick={() => openModal(character)}
+              className={`p-4 rounded-lg shadow-md transform transition-transform duration-300 hover:scale-105 hover:shadow-lg ${
+                isDarkMode ? "bg-gray-700" : "bg-white"
+              }`}
+              ref={index === filteredData.length - 1 ? lastElementRef : null}
+            >
+              <img
+                src={`https://picsum.photos/300/200?random=${index}`}
+                alt={character.name}
+                className="w-full h-40 object-cover rounded-t-lg"
+                loading="lazy"
+              />
+              <div className="mt-4">
+                <h2 className="text-xl font-semibold">{character.name}</h2>
+                <p
+                  className={`mt-2 ${
+                    isDarkMode ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  {character.description}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
 
       {isLoading && (
